@@ -12,7 +12,7 @@ public class Game {
     private int villagerNum;
     private int specialNum; // special identity
 
-    private Game() { ///////////////
+    private Game() {
         this.table = new ArrayList<Character>();
         this.currentVictim = null;
         this.wolfNum = 0;

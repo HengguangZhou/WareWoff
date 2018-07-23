@@ -16,7 +16,7 @@ public class Witch extends Character{
     }
 
     public boolean save(Character victim){
-        System.out.println(victim.toString() + "is died. Do you want to save him? 0 for no and 1 for yes");
+        System.out.println(victim.toString() + "has died. Do you want to save him? 0 for no and 1 for yes");
         Scanner reader = new Scanner(System.in);
         int n = reader.nextInt();
         while (n != 1 && n != 0){
@@ -42,6 +42,14 @@ public class Witch extends Character{
             return super.vote(characters);
         }
         return null;
+    }
+
+    public boolean getPoisonStat() {
+        return this.poisoned;
+    }
+
+    public boolean getSavedStat() {
+        return this.saved;
     }
 }
 
