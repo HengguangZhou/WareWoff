@@ -73,15 +73,12 @@ public class Game {
 
     private void distributeIdentity(int wolf, int oracle, int witch, int hunter, ArrayList<String> names) {
         ArrayList<String> a = new ArrayList<>();
-        if (hunter > 0)
-            a.add("Hunter");
-        if (wolf > 0)
-            a.add("Wolf");
-        if (oracle > 0)
-            a.add("Oracle");
-        if (witch > 0)
-            a.add("Witch");
+        a.add("Hunter");
+        a.add("Wolf");
+        a.add("Oracle");
+        a.add("Witch");
         a.add("Villager");
+
         String identity;
         int i;
         for (String c : names) {
@@ -97,23 +94,23 @@ public class Game {
             identity = a.get(i);
             switch (identity) {
                 case "Hunter":
-                    this.table.add(new Hunter("c"));
+                    this.table.add(new Hunter(c));
                     hunter--;
                     break;
                 case "Witch":
-                    this.table.add(new Witch("c"));
+                    this.table.add(new Witch(c));
                     witch--;
                     break;
                 case "Oracle":
-                    this.table.add(new Oracle("c"));
+                    this.table.add(new Oracle(c));
                     oracle--;
                     break;
                 case "Wolf":
-                    this.table.add(new Wolf("c"));
+                    this.table.add(new Wolf(c));
                     wolf--;
                     break;
                 case "Villager":
-                    this.table.add(new Villager("c"));
+                    this.table.add(new Villager(c));
                     break;
                 default:
                     System.out.println("Wtf?????");
