@@ -69,7 +69,33 @@ public class Game {
     private void vote_process(){ /////////////
 
     }  //实现投票进程
-    private void wolf_vote(){} //杀人投票 //////////////
+    private void wolf_vote(){ //杀人投票
+        boolean allSame = false; // To prevent the wolves from voting different victims
+        while (!allSame) {
+            for (Character c : this.table) {
+                if (c.getIdentity().equals("Wolf")) {
+                    if (this.currentVictim == null) {
+                        this.currentVictim = ((Wolf)c).kill_vote(this.table); //Typecast since c is actually a wolf
+                        this.currentVictim.incrementWolfVote(); // To check how many time he/she has been voted
+                    } else {
+                        if (this.currentVictim != ((Wolf)c).kill_vote(this.table)) {
+                            System.out.println("The wolves need to agree on one target.");
+                            System.out.println("Please discuss and vote again!");
+                            this.currentVictim.resetWolfVote();
+                            // Will change later to 209 a4 broadcast like function
+                            break;
+                        }
+                    }
+                }
+            }
+            // If all the wolf votes the same person, then that person dies and this function will end
+            if (this.currentVictim.getWolfVotes() == this.wolfNum) {
+                allSame = true;
+                this.currentVictim.resetWolfVote(); //After making sure this person is killed, can reset kill votes
+                                                    // (maybe not needed, we'll see...)
+            }
+        }
+    }
 
     private void distributeIdentity(int wolf, int oracle, int witch, int hunter, ArrayList<String> names) {
         ArrayList<String> a = new ArrayList<>();
@@ -118,6 +144,14 @@ public class Game {
         }
     }
 
+    private boolean oracleSeeking() { // Not implemented yet
+        return true;
+    }
+
+    private Character dyingHunter() {
+        return new Character("Not implemented yet!");
+    }
+
     private int askNum(String msg, int max){
         Scanner reader = new Scanner(System.in);
         System.out.println(msg);
@@ -133,7 +167,9 @@ public class Game {
         Game game = new Game();
         game.set_up_game();
         while (! game.game_over()){
-
+            System.out.println("The night has come.");
+            System.out.println("Wolves, please wake up and kill one person.");
+            game.wolf_vote();
         }
     }
 }

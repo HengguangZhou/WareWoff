@@ -9,6 +9,7 @@ public class Character {
     private int votes; // 投票时使用，结算后清零
     private boolean leader; //是否为警长
     private boolean poisoned; //是否被毒死
+    private int wolfVotes; //被狼人投票殺死的次數
     String identity;
 
     public  Character(String name) {
@@ -17,6 +18,7 @@ public class Character {
         this.votes = 0;
         this.leader =false;
         this.poisoned = false;
+        this.wolfVotes = 0;
     }
 
     public String getIdentity() {
@@ -93,4 +95,15 @@ public class Character {
         return this.name;
     }
 
+    public void incrementWolfVote() { // Incrementing the times this character has been voted by wolves this round
+        this.wolfVotes++;
+    }
+
+    public int getWolfVotes() {
+        return this.wolfVotes;
+    }
+
+    public void resetWolfVote() { // Reset votes to 0 after round ends or wolves not agreeing targets
+        this.wolfVotes = 0;
+    }
 }
