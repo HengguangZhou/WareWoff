@@ -71,28 +71,34 @@ public class Game {
     }  //实现投票进程
     private void wolf_vote(){ //杀人投票
         boolean allSame = false; // To prevent the wolves from voting different victims
-        while (!allSame) {
-            for (Character c : this.table) {
-                if (c.getIdentity().equals("Wolf")) {
-                    if (this.currentVictim == null) {
-                        this.currentVictim = ((Wolf)c).kill_vote(this.table); //Typecast since c is actually a wolf
-                        this.currentVictim.incrementWolfVote(); // To check how many time he/she has been voted
-                    } else {
-                        if (this.currentVictim != ((Wolf)c).kill_vote(this.table)) {
-                            System.out.println("The wolves need to agree on one target.");
-                            System.out.println("Please discuss and vote again!");
-                            this.currentVictim.resetWolfVote();
-                            // Will change later to 209 a4 broadcast like function
-                            break;
+        if (this.wolfNum > 0) { // Only works if there are still wolves in the game.
+            while (!allSame) {
+                for (Character c : this.table) {
+                    if (c instanceof Wolf) {
+                        if (this.currentVictim == null) {
+                            this.currentVictim = ((Wolf) c).kill_vote(this.table); //Typecast since c is actually a wolf
+                            this.currentVictim.incrementWolfVote(); // To check how many time he/she has been voted
+                        } else {
+                            if (this.currentVictim != ((Wolf) c).kill_vote(this.table)) {
+                                System.out.println("The wolves need to agree on one target.");
+                                System.out.println("Please discuss and vote again!");
+                                this.currentVictim.resetWolfVote();
+                                // Will change later to 209 a4 broadcast like function
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            // If all the wolf votes the same person, then that person dies and this function will end
-            if (this.currentVictim.getWolfVotes() == this.wolfNum) {
-                allSame = true;
-                this.currentVictim.resetWolfVote(); //After making sure this person is killed, can reset kill votes
-                                                    // (maybe not needed, we'll see...)
+                // If all the wolf votes the same person, then that person dies and this function will end
+                if (currentVictim != null) { // To remove potential null pointer exception cuz intelliJ so noisy...
+                    if (this.currentVictim.getWolfVotes() == this.wolfNum) {
+                        allSame = true;
+                        this.currentVictim.resetWolfVote(); //After making sure this person is killed, can reset kill votes
+                        // (maybe not needed, we'll see...)
+                    } else {
+                        this.currentVictim = null;
+                    }
+                }
             }
         }
     }
