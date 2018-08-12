@@ -8,13 +8,15 @@ import java.util.Scanner;
 public class Game {
     private ArrayList<Character> table;
     private Character currentVictim;
+    private Character witchsFav; // Victim poisoned by the witch
     private int wolfNum;
     private int villagerNum;
     private int specialNum; // special identity
 
     private Game() {
-        this.table = new ArrayList<Character>();
+        this.table = new ArrayList<>();
         this.currentVictim = null;
+        this.witchsFav = null;
         this.wolfNum = 0;
         this.villagerNum = 0;
         this.specialNum = 0;
@@ -150,8 +152,22 @@ public class Game {
         }
     }
 
-    private boolean oracleSeeking() { // Not implemented yet
-        return true;
+    private boolean[] oracleSeeking(String name) { // Looks like n^2 but amortized is not actually n^2 i think?
+        boolean[] b = new boolean[2];
+        b[0] = true; // Indicator of player's identity, true for wolf and false for others
+        b[1] = false; // Indicator of player validity
+
+        for (Character c : this.table) {
+            if (c instanceof Oracle) {
+                for (Character c1 : this.table) {
+                    if (c1.getName().equals(name)) {
+                        b[0] = ((Oracle) c).check(c1); // Store the answer for oracle in here
+                        b[1] = true; // Indicates that the player entered is a valid player
+                    }
+                }
+            }
+        }
+        return b;
     }
 
     private Character dyingHunter() {
@@ -169,13 +185,75 @@ public class Game {
         return n;
     }
 
+    private String askName() {
+        Scanner sc = new Scanner(System.in);
+        String s;
+        s = sc.next();
+        return s;
+    }
+
+    private void poisonOrSave() { // Witch can choose to poison or save people once per game
+        for (Character c: this.table) {
+            if (c instanceof Witch) {
+                String s = witchOptions();
+                if (s.equals("Save") && !((Witch)c).getSavedStat()) {
+                    ((Witch)c).save(this.currentVictim);
+                    this.currentVictim = null; //Since this person has been saved, he won't be the victim this round
+                } else if (s.equals("Poison") && !((Witch)c).getPoisonStat()) {
+                    this.witchsFav = ((Witch)c).poison(this.table); //Extra person that is going to die
+                                                                    // (may or may not be same as victim of wolf)
+                }
+            }
+        }
+    }
+
+    private String witchOptions() {
+        Scanner sc = new Scanner(System.in);
+        String s;
+        s = sc.next();
+        while (!s.equals("Save") && !s.equals("Poison")) {
+            System.out.println("Enter Save or Poison with first letter caps!");
+            s = sc.next();
+        }
+
+        return s;
+    }
+
+    private void votePolice() {
+        
+    }
+
     public static void main(String[] args) { /////////////////
         Game game = new Game();
         game.set_up_game();
         while (! game.game_over()){
             System.out.println("The night has come.");
-            System.out.println("Wolves, please wake up and kill one person.");
+            System.out.println("Wolves, please wake up and kill one person."); //Wolves' turn to vote
             game.wolf_vote();
+
+            // After voting phase for wolves, its oracles turn to check
+            System.out.println("Oracle, please declare who's identity you want to verify"); // Oracle's turn
+            boolean[] status;
+            String s = game.askName();
+            status = game.oracleSeeking(s);
+            while (!status[1]) { // Blocks the game until oracle checks a valid player
+                System.out.println("The player you want to check in invalid! Try again!");
+                s = game.askName();
+                status = game.oracleSeeking(s);
+            }
+
+            // After passing the while loop, the player name is valid for sure, so identity check completes
+            if (status[0]) {
+                System.out.println("The person you just picked is a wolf");
+            } else {
+                System.out.println("The person you just picked is not a wolf");
+            }
+
+            // After oracles' checking phase, its time for witch to save/poison people.
+            game.poisonOrSave();
+
+            //After Witch poison/save people, the night is over, and the sun is out.
+            System.out.println("The night is over! Everyone please wake up!");
         }
     }
 }
