@@ -1,1 +1,1 @@
-# WareWolf
+# Werewolf
