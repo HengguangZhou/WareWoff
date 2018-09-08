@@ -12,6 +12,7 @@ public class Game {
     private int wolfNum;
     private int villagerNum;
     private int specialNum; // special identity
+    private int day;
 
     private Game() {
         this.table = new ArrayList<>();
@@ -20,6 +21,7 @@ public class Game {
         this.wolfNum = 0;
         this.villagerNum = 0;
         this.specialNum = 0;
+        this.day = 1;
     }
 
     private void set_up_game(){
@@ -223,6 +225,10 @@ public class Game {
         
     }
 
+    private int getDay() {
+        return this.day;
+    }
+
     public static void main(String[] args) { /////////////////
         Game game = new Game();
         game.set_up_game();
@@ -254,6 +260,11 @@ public class Game {
 
             //After Witch poison/save people, the night is over, and the sun is out.
             System.out.println("The night is over! Everyone please wake up!");
+
+            // If the game is in day 1, need to vote for police first
+            if (game.getDay() == 1) {
+                game.votePolice();
+            }
         }
     }
 }
